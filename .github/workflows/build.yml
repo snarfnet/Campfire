@@ -1,0 +1,59 @@
+name: Build & TestFlight
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest
+    
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+      
+      - name: Decode & import certificate
+        run: |
+          echo "${{ secrets.DIST_CERT_BASE64 }}" | base64 -d > cert.p12
+          security import cert.p12 -k ~/Library/Keychains/login.keychain-db \
+            -P "${{ secrets.DIST_CERT_PASSWORD }}" -T /usr/bin/codesign
+      
+      - name: Decode & install provisioning profile
+        run: |
+          echo "${{ secrets.PROVISION_PROFILE_BASE64 }}" | base64 -d > profile.mobileprovision
+          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+          cp profile.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles/
+      
+      - name: Build Archive
+        run: |
+          xcodebuild archive \
+            -project Campfire/Campfire.xcodeproj \
+            -scheme Campfire \
+            -configuration Release \
+            -archivePath Campfire.xcarchive \
+            CODE_SIGN_IDENTITY="Apple Distribution"
+      
+      - name: Export IPA
+        run: |
+          xcodebuild -exportArchive \
+            -archivePath Campfire.xcarchive \
+            -exportOptionsPlist ExportOptions.plist \
+            -exportPath output
+      
+      - name: Upload to TestFlight
+        run: |
+          echo "${{ secrets.APP_STORE_CONNECT_API_KEY_BASE64 }}" | base64 -d > key.p8
+          xcrun altool --upload-app \
+            -f output/Campfire.ipa \
+            -t ios \
+            --apiKey "${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}" \
+            --apiIssuer "${{ secrets.APP_STORE_CONNECT_API_KEY_ISSUER_ID }}"
+      
+      - name: Cleanup
+        if: always()
+        run: rm -f cert.p12 profile.mobileprovision key.p8
