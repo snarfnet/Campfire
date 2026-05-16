@@ -7,34 +7,32 @@ struct EndView: View {
         ZStack {
             BonfireView()
 
-            VStack {
+            VStack(spacing: 0) {
                 Spacer()
 
-                VStack(spacing: 20) {
-                    Text("またいつか")
-                        .font(.title2)
-                        .fontWeight(.bold)
-                        .foregroundColor(Color(red: 1.0, green: 0.84, blue: 0.71))
+                VStack(alignment: .leading, spacing: 18) {
+                    Text("また、火のそばで。")
+                        .font(.system(.title2, design: .serif).weight(.bold))
+                        .foregroundColor(CampfireTheme.paper)
+
+                    Text("この会話はここで終わりました。少し休んで、また別の夜へ戻れます。")
+                        .font(.system(.body, design: .rounded))
+                        .foregroundColor(CampfireTheme.paper.opacity(0.7))
+                        .lineSpacing(4)
+                        .fixedSize(horizontal: false, vertical: true)
 
                     Button(action: { dismiss() }) {
                         Text("ホームへ戻る")
-                            .font(.title3)
-                            .fontWeight(.semibold)
-                            .foregroundColor(.black)
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(Color(red: 1.0, green: 0.7, blue: 0.3))
-                            .cornerRadius(8)
                     }
+                    .buttonStyle(CampfirePrimaryButtonStyle())
+                    .padding(.top, 8)
                 }
                 .padding(24)
-                .background(Color.black.opacity(0.4))
-                .cornerRadius(12)
-                .padding()
-
-                Spacer()
+                .campfirePanel()
+                .padding(.horizontal, 20)
+                .padding(.bottom, 34)
             }
         }
-        .ignoresSafeArea()
+        .ignoresSafeArea(edges: .bottom)
     }
 }

@@ -2,51 +2,69 @@ import SwiftUI
 
 struct WaitingView: View {
     @ObservedObject var matchmakingVM: MatchmakingViewModel
-    @State private var dots = ""
+    @State private var pulse = false
 
     var body: some View {
         ZStack {
             BonfireView()
 
-            VStack {
+            VStack(spacing: 0) {
                 Spacer()
 
-                VStack(spacing: 20) {
-                    Text("待っています\(dots)")
-                        .font(.title3)
-                        .foregroundColor(Color(red: 1.0, green: 0.84, blue: 0.71))
-                        .animation(.easeInOut(duration: 0.6).repeatForever(), value: dots)
+                VStack(spacing: 22) {
+                    ZStack {
+                        Circle()
+                            .stroke(CampfireTheme.warm.opacity(0.18), lineWidth: 1)
+                            .frame(width: 132, height: 132)
+                            .scaleEffect(pulse ? 1.16 : 0.92)
+                            .opacity(pulse ? 0.18 : 0.7)
+
+                        Circle()
+                            .fill(
+                                RadialGradient(
+                                    colors: [CampfireTheme.warm, CampfireTheme.flame, CampfireTheme.ember.opacity(0.2)],
+                                    center: .center,
+                                    startRadius: 5,
+                                    endRadius: 48
+                                )
+                            )
+                            .frame(width: 84, height: 84)
+                            .shadow(color: CampfireTheme.flame.opacity(0.5), radius: 24)
+
+                        Text("待")
+                            .font(.system(size: 30, weight: .heavy, design: .serif))
+                            .foregroundColor(Color(red: 0.1, green: 0.05, blue: 0.02))
+                    }
+
+                    VStack(spacing: 8) {
+                        Text("相手を待っています")
+                            .font(.system(.title3, design: .rounded).weight(.bold))
+                            .foregroundColor(CampfireTheme.paper)
+
+                        Text("火が消える前に、誰かが来ます。")
+                            .font(.system(.subheadline, design: .rounded))
+                            .foregroundColor(CampfireTheme.paper.opacity(0.64))
+                    }
 
                     Button(action: {
                         matchmakingVM.isWaiting = false
                     }) {
                         Text("キャンセル")
-                            .font(.title3)
-                            .fontWeight(.semibold)
-                            .foregroundColor(.white)
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(Color.red.opacity(0.7))
-                            .cornerRadius(8)
                     }
+                    .buttonStyle(CampfirePrimaryButtonStyle(isDestructive: true))
+                    .padding(.top, 6)
                 }
                 .padding(24)
-                .background(Color.black.opacity(0.4))
-                .cornerRadius(12)
-                .padding()
-
-                Spacer()
+                .campfirePanel()
+                .padding(.horizontal, 20)
+                .padding(.bottom, 34)
             }
         }
-        .ignoresSafeArea()
+        .ignoresSafeArea(edges: .bottom)
         .onAppear {
-            animateDots()
-        }
-    }
-
-    private func animateDots() {
-        Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { _ in
-            dots = dots.count < 3 ? dots + "・" : ""
+            withAnimation(.easeInOut(duration: 1.2).repeatForever(autoreverses: true)) {
+                pulse = true
+            }
         }
     }
 }
