@@ -1,0 +1,29 @@
+# Xcode
+build/
+*.pbxuser
+*.mode1v3
+*.mode2v3
+*.perspectivev3
+*.xcworkspace
+xcuserdata/
+*.xcodeproj/xcuserdata/
+*.resolved
+
+# Swift
+.build/
+.swiftpm/
+*.xcarchive
+
+# macOS
+.DS_Store
+
+# Env
+.env
+.env.local
+
+# Misc
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
