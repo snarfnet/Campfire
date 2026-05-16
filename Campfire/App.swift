@@ -4,7 +4,7 @@ import SwiftUI
 struct CampfireApp: App {
     @StateObject private var authManager = AuthManager()
     @StateObject private var matchmakingVM = MatchmakingViewModel()
-    
+
     var body: some Scene {
         WindowGroup {
             if let user = authManager.currentUser {
@@ -21,7 +21,7 @@ struct CampfireApp: App {
                     VStack {
                         Spacer()
                         Button(action: { authManager.signInAnonymously() }) {
-                            Text("焚き火へ")
+                            Text("焚火へ")
                                 .font(.title2)
                                 .fontWeight(.bold)
                                 .foregroundColor(.black)

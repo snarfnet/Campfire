@@ -25,10 +25,11 @@ struct BonfireView: View {
                         
                         // Flames
                         ForEach(0..<5, id: \.self) { index in
+                            let phase = context.date.timeIntervalSince1970
                             Flame()
                                 .offset(x: CGFloat(index - 2) * 24)
-                                .offset(y: sin(context.date.timeIntervalSince1970 * 3 + CGFloat(index) * 0.5) * 10)
-                                .opacity(0.8 + 0.2 * sin(context.date.timeIntervalSince1970 * 2 + CGFloat(index)))
+                                .offset(y: CGFloat(sin(phase * 3 + Double(index) * 0.5) * 10))
+                                .opacity(0.8 + 0.2 * sin(phase * 2 + Double(index)))
                         }
                     }
                     
