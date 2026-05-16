@@ -53,9 +53,12 @@ jobs:
           echo "$PROVISION_PROFILE_BASE64" | base64 -d > "$PROFILE_PATH"
           security cms -D -i "$PROFILE_PATH" > "$PROFILE_PLIST"
           PROFILE_UUID=$(/usr/libexec/PlistBuddy -c "Print UUID" "$PROFILE_PLIST")
+          PROFILE_NAME=$(/usr/libexec/PlistBuddy -c "Print Name" "$PROFILE_PLIST")
 
           mkdir -p "$HOME/Library/MobileDevice/Provisioning Profiles"
           cp "$PROFILE_PATH" "$HOME/Library/MobileDevice/Provisioning Profiles/$PROFILE_UUID.mobileprovision"
+          echo "PROFILE_UUID=$PROFILE_UUID" >> "$GITHUB_ENV"
+          echo "PROFILE_NAME=$PROFILE_NAME" >> "$GITHUB_ENV"
 
       - name: Build archive
         run: |
@@ -68,7 +71,7 @@ jobs:
             DEVELOPMENT_TEAM="8ZMLVT8WBP" \
             CODE_SIGN_STYLE="Manual" \
             CODE_SIGN_IDENTITY="Apple Distribution" \
-            PROVISIONING_PROFILE_SPECIFIER="${{ secrets.PROVISION_PROFILE_NAME }}"
+            PROVISIONING_PROFILE="$PROFILE_UUID"
 
       - name: Export IPA
         run: |
@@ -87,7 +90,7 @@ jobs:
             <key>provisioningProfiles</key>
             <dict>
               <key>com.tokyonasu.Campfire</key>
-              <string>${{ secrets.PROVISION_PROFILE_NAME }}</string>
+              <string>$PROFILE_NAME</string>
             </dict>
             <key>stripSwiftSymbols</key>
             <true/>
