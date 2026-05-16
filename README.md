@@ -1,4 +1,4 @@
-# Campfire
+﻿# Campfire
 
 焚火をテーマにした匿名2人チャットのiOSアプリです。SwiftUIとSupabaseで作っています。
 
@@ -13,7 +13,7 @@
 ## 設定
 
 - Bundle ID: `com.tokyonasu.Campfire`
-- Team ID: `8ZMLVT8WBP`
+- Team ID: `83VGKGSQUH`
 - Minimum iOS Version: 15.0
 - Project: `Campfire/Campfire.xcodeproj`
 
