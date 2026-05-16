@@ -118,7 +118,10 @@ jobs:
             --type ios \
             --file "$RUNNER_TEMP/output/Campfire.ipa" \
             --apiKey "$APP_STORE_CONNECT_API_KEY_ID" \
-            --apiIssuer "$APP_STORE_CONNECT_API_KEY_ISSUER_ID"
+            --apiIssuer "$APP_STORE_CONNECT_API_KEY_ISSUER_ID" \
+            2>&1 | tee "$RUNNER_TEMP/altool.log"
+          test "${PIPESTATUS[0]}" -eq 0
+          ! grep -q "UPLOAD FAILED\\|Validation failed\\|ERROR:" "$RUNNER_TEMP/altool.log"
 
       - name: Cleanup signing files
         if: always()
